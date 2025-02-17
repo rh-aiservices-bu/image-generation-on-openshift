@@ -1,8 +1,19 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
+<<<<<<< HEAD
 import { getSDXLEndpoint, getGuardEnabled } from '../../../utils/config'; // Adjust the import path as needed
 import guard from '../../../services/guard';
+=======
+import {
+  getSDXLEndpoint,
+  getGuardEnabled,
+  getGuardEndpoint,
+  getGuardModel,
+  getGuardTemp,
+} from '../../../utils/config'; // Adjust the import path as needed
+import { parseGuardResponse } from '../../../utils/parser';
+>>>>>>> 5eaff0b (Tested with guardian model)
 export default async (fastify: FastifyInstance): Promise<void> => {
   const decoder = new TextDecoder('utf-8');
 
@@ -30,6 +41,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       denoising_limit,
     };
 
+<<<<<<< HEAD
     if (getGuardEnabled() === 'true') {
       const failedGuardCheck = await guard(data);
       if (failedGuardCheck) {
@@ -46,13 +58,23 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       getSDXLEndpoint().sdxlEndpointURL + '/generate',
     );
 
+=======
+>>>>>>> 5eaff0b (Tested with guardian model)
     if (getGuardEnabled() === 'true') {
-      const guardResponse = await axios.post(
-        getGuardEndpoint().guardEndpointURL +
-          `/generate?user_key=${getGuardEndpoint().guardEndpointToken}`,
-        data.prompt,
+      console.log(
+        'Sending request to Guard endpoint:',
+        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
       );
-      if (guardResponse.data === 'yes') {
+      const message = {
+        model: getGuardModel(),
+        messages: [{ role: 'user', content: data.prompt }],
+        temperature: getGuardTemp(),
+      };
+      const guardResponse = await axios.post(
+        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
+        message,
+      );
+      if (parseGuardResponse(guardResponse.data) !== 'No') {
         reply.code(403).send({
           message:
             'Your query appears to contain inappropriate content. Please rephrase and try again',
@@ -60,6 +82,11 @@ export default async (fastify: FastifyInstance): Promise<void> => {
         return;
       }
     }
+
+    console.log(
+      'Sending request to SDXL endpoint:',
+      getSDXLEndpoint().sdxlEndpointURL + '/generate',
+    );
 
     const response = await axios.post(
       getSDXLEndpoint().sdxlEndpointURL +
