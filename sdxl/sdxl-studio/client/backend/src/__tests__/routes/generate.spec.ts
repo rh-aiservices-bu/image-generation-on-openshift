@@ -77,7 +77,6 @@ describe('POST /', () => {
         return Promise.reject(new Error('Invalid request'));
       }
     });
-
     const response = await fastify.inject({
       method: 'POST',
       url: '/',

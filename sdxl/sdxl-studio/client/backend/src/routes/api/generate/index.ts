@@ -46,6 +46,21 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       getSDXLEndpoint().sdxlEndpointURL + '/generate',
     );
 
+    if (getGuardEnabled() === 'true') {
+      const guardResponse = await axios.post(
+        getGuardEndpoint().guardEndpointURL +
+          `/generate?user_key=${getGuardEndpoint().guardEndpointToken}`,
+        data.prompt,
+      );
+      if (guardResponse.data === 'yes') {
+        reply.code(403).send({
+          message:
+            'Your query appears to contain inappropriate content. Please rephrase and try again',
+        });
+        return;
+      }
+    }
+
     const response = await axios.post(
       getSDXLEndpoint().sdxlEndpointURL +
         `/generate?user_key=${getSDXLEndpoint().sdxlEndpointToken}`,
