@@ -1,12 +1,27 @@
 // Initial configuration
 let sdxlEndpointURL = process.env.SDXL_ENDPOINT_URL || '';
 let sdxlEndpointToken = process.env.SDXL_ENDPOINT_TOKEN || '';
+let guardEndpointURL = process.env.GUARD_ENDPOINT_URL || '';
+let guardEndpointToken = process.env.GUARD_ENDPOINT_TOKEN || '';
 const parasolMode = process.env.PARASOL_MODE || 'false';
+let guardEnabled = process.env.GUARD_ENABLED || 'false';
 
 export const getSDXLEndpoint = (): any => {
   return {
     sdxlEndpointURL: sdxlEndpointURL.replace(/\/$/, ''),
     sdxlEndpointToken,
+  };
+};
+
+export const setGuardEndpoint = (url: string, token: string): void => {
+  guardEndpointURL = url;
+  guardEndpointToken = token;
+};
+
+export const getGuardEndpoint = (): any => {
+  return {
+    guardEndpointURL: guardEndpointURL.replace(/\/$/, ''),
+    guardEndpointToken,
   };
 };
 
@@ -17,4 +32,12 @@ export const setSDXLEndpoint = (url: string, token: string): void => {
 
 export const getParasolMode = (): string => {
   return parasolMode;
+};
+
+export const getGuardEnabled = (): string => {
+  return guardEnabled;
+};
+
+export const setGuardEnabled = (enabled: string): void => {
+  guardEnabled = enabled;
 };
