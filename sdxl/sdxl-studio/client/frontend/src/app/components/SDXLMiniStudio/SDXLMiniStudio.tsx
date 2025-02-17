@@ -231,6 +231,7 @@ const SDXLMiniStudio: React.FunctionComponent<SDXLMiniStudioProps> = () => {
         };
       })
       .catch((error) => {
+        setDocumentRendererVisible(false);
         Emitter.emit('notification', {
           variant: 'warning',
           title: '',
