@@ -48,3 +48,7 @@ export const getGuardConfig = (): GuardConfig => {
     guardPromptPreFix,
   };
 };
+
+export const getGuardPromptPreFix = (): string => {
+  return guardPromptPreFix;
+};
