@@ -1,8 +1,14 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
-import { getSDXLEndpoint, getGuardEnabled, getGuardEndpoint } from '../../../utils/config'; // Adjust the import path as needed
-
+import {
+  getSDXLEndpoint,
+  getGuardEnabled,
+  getGuardEndpoint,
+  getGuardModel,
+  getGuardTemp,
+} from '../../../utils/config'; // Adjust the import path as needed
+import { parseGuardResponse } from '../../../utils/parser';
 export default async (fastify: FastifyInstance): Promise<void> => {
   const decoder = new TextDecoder('utf-8');
 
@@ -30,18 +36,21 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       denoising_limit,
     };
 
-    console.log(
-      'Sending request to SDXL endpoint:',
-      getSDXLEndpoint().sdxlEndpointURL + '/generate',
-    );
-
     if (getGuardEnabled() === 'true') {
-      const guardResponse = await axios.post(
-        getGuardEndpoint().guardEndpointURL +
-          `/generate?user_key=${getGuardEndpoint().guardEndpointToken}`,
-        data.prompt,
+      console.log(
+        'Sending request to Guard endpoint:',
+        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
       );
-      if (guardResponse.data === 'yes') {
+      const message = {
+        model: getGuardModel(),
+        messages: [{ role: 'user', content: data.prompt }],
+        temperature: getGuardTemp(),
+      };
+      const guardResponse = await axios.post(
+        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
+        message,
+      );
+      if (parseGuardResponse(guardResponse.data) !== 'No') {
         reply.code(403).send({
           message:
             'Your query appears to contain inappropriate content. Please rephrase and try again',
@@ -49,6 +58,11 @@ export default async (fastify: FastifyInstance): Promise<void> => {
         return;
       }
     }
+
+    console.log(
+      'Sending request to SDXL endpoint:',
+      getSDXLEndpoint().sdxlEndpointURL + '/generate',
+    );
 
     const response = await axios.post(
       getSDXLEndpoint().sdxlEndpointURL +

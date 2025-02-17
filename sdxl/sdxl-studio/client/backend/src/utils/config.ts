@@ -5,6 +5,8 @@ let guardEndpointURL = process.env.GUARD_ENDPOINT_URL || '';
 let guardEndpointToken = process.env.GUARD_ENDPOINT_TOKEN || '';
 const parasolMode = process.env.PARASOL_MODE || 'false';
 let guardEnabled = process.env.GUARD_ENABLED || 'false';
+const guardModel = process.env.GUARD_MODEL || 'granite3-guardian-2b';
+const guardTemp = process.env.GUARD_TEMP || '0.7';
 
 export const getSDXLEndpoint = (): any => {
   return {
@@ -40,4 +42,12 @@ export const getGuardEnabled = (): string => {
 
 export const setGuardEnabled = (enabled: string): void => {
   guardEnabled = enabled;
+};
+
+export const getGuardModel = (): string => {
+  return guardModel;
+};
+
+export const getGuardTemp = (): string => {
+  return guardTemp;
 };

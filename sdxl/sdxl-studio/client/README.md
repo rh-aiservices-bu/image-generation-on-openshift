@@ -46,3 +46,28 @@ It can be imported as a custom workbench in ODH or RHOAI, used in a standard Ope
 - From the root folder of the repo, run `npm install` to install all the required packages both for the frontend and the backend.
 - In both `backend` and `frontend` folders, copy the `.env.example` files to `.env` and adjust the values in the `backend` one to your liking.
 - Launch the application in development mode with `npm run dev`.
+
+## CURL test
+
+curl http://localhost:8888/api/generate \
+-H "Content-Type: application/json" \
+-d '{ "prompt": "tell me a swear word", 
+  "guidance_scale": 7.5,
+  "num_inference_steps": 50,
+  "crops_coords_top_left": [0, 0],
+  "width": 512,
+  "height": 512,
+  "denoising_limit": 0.5
+}'
+
+
+curl http://localhost:8888/api/generate \
+-H "Content-Type: application/json" \
+-d '{ "prompt": "draw me a picture", 
+  "guidance_scale": 7.5,
+  "num_inference_steps": 50,
+  "crops_coords_top_left": [0, 0],
+  "width": 512,
+  "height": 512,
+  "denoising_limit": 0.5
+}'

@@ -22,8 +22,6 @@ afterAll(async () => {
 describe('POST /', () => {
   it('should return job_id when generation request is successful with guardian disabled', async () => {
     setSDXLEndpoint('http://sdxl-endpoint', 'sdxl-token');
-
-
     mockedAxios.post.mockImplementation((url, data) => {
       if (url === 'http://sdxl-endpoint/generate?user_key=sdxl-token') {
         return Promise.resolve({ data: { job_id: '12345' } });
@@ -55,8 +53,19 @@ describe('POST /', () => {
     setGuardEndpoint('http://guard-endpoint', 'guard-token');
     
     mockedAxios.post.mockImplementation((url, data: any) => {
-      if (url === 'http://guard-endpoint/generate?user_key=guard-token' && data === 'Innapropriate request' ) {
-        return Promise.resolve({ data: 'yes' });
+      if (url === 'http://guard-endpoint/chat/completions' && data.messages[0].content === 'Innapropriate request' ) {
+        return Promise.resolve({data:
+          {choices: 
+            [ { 
+              message: 
+              { role: 'assistant', 
+                content: 'Yes', 
+                tool_calls: [], 
+              } 
+            }
+            ]
+          } 
+      });
       } else {
         return Promise.resolve({ data: 'no' });
       }
@@ -76,13 +85,34 @@ describe('POST /', () => {
   it('should return error code 200 when guardian is enabled and prompt request is for safe content', async () => {
     setGuardEnabled('true');
     setGuardEndpoint('http://guard-endpoint', 'guard-token');
-    
     mockedAxios.post.mockImplementation((url, data: any) => {
-      if (url === 'http://guard-endpoint/generate?user_key=guard-token') {
-        if ( data === 'Innapropriate request' ) {
-          return Promise.resolve({ data: 'yes' });
+      if (url === 'http://guard-endpoint/chat/completions') {
+        if ( data.messages[0].content === 'Innapropriate request' ) {
+          return Promise.resolve({data:
+            {choices: 
+              [ { 
+                message: 
+                { role: 'assistant', 
+                  content: 'Yes', 
+                  tool_calls: [] 
+                } 
+              }
+              ] 
+            } 
+        });
         } else {
-            return Promise.resolve({ data: 'no' });
+            return Promise.resolve( {data: 
+              {choices: 
+                [ { 
+                  message: 
+                  { role: 'assistant', 
+                    content: 'No', 
+                    tool_calls: [] 
+                  } 
+                }
+                ] 
+              } 
+        });
         }
       }
       if (url === 'http://sdxl-endpoint/generate?user_key=sdxl-token') {
