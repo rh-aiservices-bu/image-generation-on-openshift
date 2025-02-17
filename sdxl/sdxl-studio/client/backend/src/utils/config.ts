@@ -7,6 +7,7 @@ const parasolMode = process.env.PARASOL_MODE || 'false';
 let guardEnabled = process.env.GUARD_ENABLED || 'false';
 const guardModel = process.env.GUARD_MODEL || 'granite3-guardian-2b';
 const guardTemp = process.env.GUARD_TEMP || '0.7';
+const guardPromptPreFix = process.env.GUARD_PROMPT_PREFIX || 'Draw a picture of';
 
 export const getSDXLEndpoint = (): any => {
   return {
@@ -50,4 +51,8 @@ export const getGuardModel = (): string => {
 
 export const getGuardTemp = (): string => {
   return guardTemp;
+};
+
+export const getGuardPromptPreFix = (): string => {
+  return guardPromptPreFix;
 };

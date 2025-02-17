@@ -7,6 +7,7 @@ import {
   getGuardEndpoint,
   getGuardModel,
   getGuardTemp,
+  getGuardPromptPreFix,
 } from '../../../utils/config'; // Adjust the import path as needed
 import { parseGuardResponse } from '../../../utils/parser';
 export default async (fastify: FastifyInstance): Promise<void> => {
@@ -43,7 +44,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       );
       const message = {
         model: getGuardModel(),
-        messages: [{ role: 'user', content: data.prompt }],
+        messages: [{ role: 'user', content: getGuardPromptPreFix() + ' ' + data.prompt }],
         temperature: getGuardTemp(),
       };
       const guardResponse = await axios.post(
