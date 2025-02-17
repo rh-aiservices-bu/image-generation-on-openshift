@@ -20,6 +20,11 @@ It can be imported as a custom workbench in ODH or RHOAI, used in a standard Ope
 - Optionally create environment variables to connect to the inference endpoint:
   - `SDXL_ENDPOINT_URL`: for example `https://your-endpoint.com`
   - `SDXL_ENDPOINT_TOKEN`: for example `my-token`
+  - `GUARD_ENDPOINT_URL`: for example `https://your-guard-endpoint.com`
+  - `GUARD_ENDPOINT_TOKEN`: for example `my-guard-token`
+  - `GUARD_ENABLED`: Turn on Guard e.g. 'true' default 'false'
+  - `GUARD_TEMP`: e.g. '1.0' default '0.7'
+  
 - If you don't set the above values, you can enter them in the application later on in the Settings menu. However, those custom values will be valid only as long as the pod is running.
 
 ### Standard Deployment in OpenShift
