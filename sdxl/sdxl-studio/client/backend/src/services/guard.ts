@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Payload } from '../schema/payload';
 import {
 <<<<<<< HEAD
+<<<<<<< HEAD
     getGuardConfig
 =======
     getGuardEndpoint,
@@ -9,10 +10,14 @@ import {
     getGuardTemp,
     getGuardPromptPreFix,
 >>>>>>> 03a764f (Refactor)
+=======
+    getGuardConfig
+>>>>>>> 0edc1a7 (More refactoring)
   } from '../utils/config';
 import { parseGuardResponse } from '../utils/parser';
 
 export default async (payload: Payload): Promise<boolean> => {
+<<<<<<< HEAD
 <<<<<<< HEAD
     const guardConfig = getGuardConfig();
     const message = {
@@ -41,23 +46,31 @@ export default async (payload: Payload): Promise<boolean> => {
     } else {
       return false // Prompt passed guard check 
 =======
+=======
+    const guardConfig = getGuardConfig();
+>>>>>>> 0edc1a7 (More refactoring)
     const message = {
-      model: getGuardModel(),
-      messages: [{ role: 'user', content: getGuardPromptPreFix() + ' ' + payload.prompt }],
-      temperature: getGuardTemp(),
+      model: guardConfig.guardModel,
+      messages: [{ role: 'user', content: guardConfig.guardPromptPreFix + ' ' + payload.prompt }],
+      temperature: guardConfig.guardTemp,
     };
     console.log(
       'Sending request to Guard endpoint:',
-      getGuardEndpoint().guardEndpointURL + `/chat/completions`,
+      guardConfig.guardEndpointURL + `/chat/completions`,
     );
     const guardResponse = await axios.post(
-      getGuardEndpoint().guardEndpointURL + `/chat/completions`,
+      guardConfig.guardEndpointURL+ `/chat/completions`,
       message,
     );
+    console.log(guardResponse);
     if (parseGuardResponse(guardResponse.data) !== 'No') {
       return false // Prompt failed guard check
     } else {
+<<<<<<< HEAD
       return true // Prompt passed guard check
 >>>>>>> 03a764f (Refactor)
+=======
+      return true // Prompt passed guard check 
+>>>>>>> 0edc1a7 (More refactoring)
     }
 };

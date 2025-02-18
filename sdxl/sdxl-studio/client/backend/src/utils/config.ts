@@ -8,12 +8,16 @@ let guardEnabled = process.env.GUARD_ENABLED || 'false';
 const guardModel = process.env.GUARD_MODEL || 'granite3-guardian-2b';
 const guardTemp = process.env.GUARD_TEMP || '0.7';
 const guardPromptPreFix = process.env.GUARD_PROMPT_PREFIX || 'Draw a picture of';
+<<<<<<< HEAD
 let safetyCheckEnabled = process.env.SAFETY_CHECK_ENABLED || 'false';
 const safetyCheckEndpointURL = process.env.SAFETY_CHECK_ENDPOINT_URL || '';
 const safetyCheckEndpointToken = process.env.SAFETY_CHECK_ENDPOINT_TOKEN || '';
 const safetyCheckModel = process.env.SAFETY_CHECK_MODEL || 'safety-checker';
 
 import { GuardConfig, SafetyCheckConfig } from '../schema/config';
+=======
+import { GuardConfig } from '../schema/guardConfig';
+>>>>>>> 0edc1a7 (More refactoring)
 
 export const getSDXLEndpoint = (): any => {
   return {
@@ -52,6 +56,7 @@ export const getGuardConfig = (): GuardConfig => {
     guardEndpointURL,
     guardPromptPreFix,
   };
+<<<<<<< HEAD
 };
 
 export const getSafetyCheckEnabled = (): string => {
@@ -60,6 +65,8 @@ export const getSafetyCheckEnabled = (): string => {
 
 export const setSafetyCheckEnabled = (enabled: string): void => {
   safetyCheckEnabled = enabled;
+=======
+>>>>>>> 0edc1a7 (More refactoring)
 };
 
 export const getSafetyCheckConfig = (): SafetyCheckConfig => {
