@@ -53,8 +53,9 @@ It can be imported as a custom workbench in ODH or RHOAI, used in a standard Ope
 - In both `backend` and `frontend` folders, copy the `.env.example` files to `.env` and adjust the values in the `backend` one to your liking.
 - Launch the application in development mode with `npm run dev`.
 
-## CURL test
+## CURL tests
 
+### backend
 curl http://localhost:8888/api/generate \
 -H "Content-Type: application/json" \
 -d '{ "prompt": "tell me a swear word", 
@@ -76,4 +77,15 @@ curl http://localhost:8888/api/generate \
   "width": 512,
   "height": 512,
   "denoising_limit": 0.5
+}'
+
+### guard model
+
+curl $ENDPOINT \
+-H "Content-Type: application/json" \
+-d '{
+"model": "granite3-guardian-8b",
+"messages": [{"role": "user", "content": "draw a picture of a dog"}],
+"temperature": 0.7,
+"max_tokens": 100
 }'

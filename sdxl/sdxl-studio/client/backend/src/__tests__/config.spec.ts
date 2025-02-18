@@ -1,4 +1,4 @@
-import {getParasolMode, getSDXLEndpoint, setSDXLEndpoint, getGuardEndpoint, setGuardEndpoint, getGuardEnabled}  from '../utils/config';
+import {getParasolMode, getSDXLEndpoint, setSDXLEndpoint,  setGuardEndpoint, getGuardConfig, getGuardEnabled}  from '../utils/config';
 
 test('getParasolMode: default, false ', () => {
   
@@ -11,10 +11,11 @@ test('getSDXLEndpoint: ', () => {
   expect(getSDXLEndpoint()).toMatchObject({"sdxlEndpointToken": "sdxl-token", "sdxlEndpointURL": "http://sdxl.url.endpoint"});
 });
 
-test('getGuardEndpoint: ', () => {
+test('SetGuardEndpoint: ', () => {
   setGuardEndpoint('http://guard.url.endpoint/', 'guard-token')
-
-  expect(getGuardEndpoint()).toMatchObject({"guardEndpointToken": "guard-token", "guardEndpointURL": "http://guard.url.endpoint"});
+  const guardConfig = getGuardConfig();
+  expect(guardConfig.guardEndpointURL).toMatch( "http://guard.url.endpoint");
+  expect(guardConfig.guardEndpointToken).toMatch( "guard-token");
 });
 
 test('getGuardEnabled: default, false ', () => {

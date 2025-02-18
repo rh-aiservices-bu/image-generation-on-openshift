@@ -8,6 +8,7 @@ let guardEnabled = process.env.GUARD_ENABLED || 'false';
 const guardModel = process.env.GUARD_MODEL || 'granite3-guardian-2b';
 const guardTemp = process.env.GUARD_TEMP || '0.7';
 const guardPromptPreFix = process.env.GUARD_PROMPT_PREFIX || 'Draw a picture of';
+import { GuardConfig } from '../schema/guardConfig';
 
 export const getSDXLEndpoint = (): any => {
   return {
@@ -19,13 +20,6 @@ export const getSDXLEndpoint = (): any => {
 export const setGuardEndpoint = (url: string, token: string): void => {
   guardEndpointURL = url;
   guardEndpointToken = token;
-};
-
-export const getGuardEndpoint = (): any => {
-  return {
-    guardEndpointURL: guardEndpointURL.replace(/\/$/, ''),
-    guardEndpointToken,
-  };
 };
 
 export const setSDXLEndpoint = (url: string, token: string): void => {
@@ -45,14 +39,12 @@ export const setGuardEnabled = (enabled: string): void => {
   guardEnabled = enabled;
 };
 
-export const getGuardModel = (): string => {
-  return guardModel;
-};
-
-export const getGuardTemp = (): string => {
-  return guardTemp;
-};
-
-export const getGuardPromptPreFix = (): string => {
-  return guardPromptPreFix;
+export const getGuardConfig = (): GuardConfig => {
+  return {
+    guardModel,
+    guardTemp,
+    guardEndpointToken,
+    guardEndpointURL,
+    guardPromptPreFix,
+  };
 };
