@@ -23,10 +23,14 @@ describe('Guard Function', () => {
             crops_coords_top_left: [0,0],
             width: 512,
             height: 512, 
+<<<<<<< HEAD
             denoising_limit: 0,
             past_threshold: false,
             image_failed_check: false
         };
+=======
+            denoising_limit: 0};
+>>>>>>> e584030 (Added tests for guard module)
             
         mockConfig = {
             guardModel: 'test-model',
@@ -39,14 +43,22 @@ describe('Guard Function', () => {
    
     });
 
+<<<<<<< HEAD
     it('should return true when guard response is not "No"', async () => {
+=======
+    it('should return false when guard response is not "No"', async () => {
+>>>>>>> e584030 (Added tests for guard module)
 
         mockedAxios.post.mockResolvedValue({ data: { response: 'Yes' } });
         (parseGuardResponse as jest.Mock).mockReturnValue('Yes');
   
 
         const result = await guardFunction(mockPayload);
+<<<<<<< HEAD
         expect(result).toBe(true);
+=======
+        expect(result).toBe(false);
+>>>>>>> e584030 (Added tests for guard module)
         expect(axios.post).toHaveBeenCalledWith(
             'https://test-url.com/chat/completions',
             {
@@ -63,11 +75,21 @@ describe('Guard Function', () => {
         );
     });
 
+<<<<<<< HEAD
     it('should return false when guard response is "No"', async () => {
+=======
+    it('should return true when guard response is "No"', async () => {
+>>>>>>> e584030 (Added tests for guard module)
         mockedAxios.post.mockResolvedValue({ data: { response: 'No' } });
         (parseGuardResponse as jest.Mock).mockReturnValue('No');
 
         const result = await guardFunction(mockPayload);
+<<<<<<< HEAD
         expect(result).toBe(false);
     });
 });
+=======
+        expect(result).toBe(true);
+    });
+});
+>>>>>>> e584030 (Added tests for guard module)
