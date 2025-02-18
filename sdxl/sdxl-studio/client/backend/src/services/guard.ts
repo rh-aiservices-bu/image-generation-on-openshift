@@ -16,11 +16,18 @@ export default async (payload: Payload): Promise<boolean> => {
       'Sending request to Guard endpoint:',
       guardConfig.guardEndpointURL + `/chat/completions`,
     );
+    const headers = {
+      Authorization: `Bearer ${guardConfig.guardEndpointToken}`, // Include Bearer Token
+      'Content-Type': 'application/json', // Ensure correct content type
+    }
     const guardResponse = await axios.post(
-      guardConfig.guardEndpointURL+ `/chat/completions`,
-      message,
-    );
-    console.log(guardResponse);
+        guardConfig.guardEndpointURL + `/chat/completions`,
+        message,
+        {
+          headers
+        }
+      );
+
     if (parseGuardResponse(guardResponse.data) !== 'No') {
       return false // Prompt failed guard check
     } else {
