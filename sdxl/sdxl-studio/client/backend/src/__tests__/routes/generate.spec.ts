@@ -52,7 +52,7 @@ describe('POST /', () => {
 
   it('should reject a request if guard check fails', async () => {
     setGuardEnabled('true');
-    (guard as jest.Mock).mockResolvedValue(false);
+    (guard as jest.Mock).mockResolvedValue(true);
 
     const response = await fastify.inject({
       method: 'POST',
@@ -69,7 +69,7 @@ describe('POST /', () => {
 
   it('should return error code 200 when guardian is enabled and prompt request is for safe content', async () => {
     setGuardEnabled('true');
-    (guard as jest.Mock).mockResolvedValue(true);
+    (guard as jest.Mock).mockResolvedValue(false);
     mockedAxios.post.mockImplementation((url, data) => {
       if (url === 'http://sdxl-endpoint/generate?user_key=sdxl-token') {
         return Promise.resolve({ data: { job_id: '98765' } });

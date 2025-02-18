@@ -36,14 +36,14 @@ describe('Guard Function', () => {
    
     });
 
-    it('should return false when guard response is not "No"', async () => {
+    it('should return true when guard response is not "No"', async () => {
 
         mockedAxios.post.mockResolvedValue({ data: { response: 'Yes' } });
         (parseGuardResponse as jest.Mock).mockReturnValue('Yes');
   
 
         const result = await guardFunction(mockPayload);
-        expect(result).toBe(false);
+        expect(result).toBe(true);
         expect(axios.post).toHaveBeenCalledWith(
             'https://test-url.com/chat/completions',
             {
@@ -60,11 +60,11 @@ describe('Guard Function', () => {
         );
     });
 
-    it('should return true when guard response is "No"', async () => {
+    it('should return false when guard response is "No"', async () => {
         mockedAxios.post.mockResolvedValue({ data: { response: 'No' } });
         (parseGuardResponse as jest.Mock).mockReturnValue('No');
 
         const result = await guardFunction(mockPayload);
-        expect(result).toBe(true);
+        expect(result).toBe(false);
     });
 });

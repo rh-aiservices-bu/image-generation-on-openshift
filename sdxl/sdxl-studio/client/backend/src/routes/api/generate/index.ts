@@ -31,8 +31,8 @@ export default async (fastify: FastifyInstance): Promise<void> => {
     };
 
     if (getGuardEnabled() === 'true') {
-      const passedGuardCheck = await guard(data);
-      if (!passedGuardCheck) {
+      const failedGuardCheck = await guard(data);
+      if (failedGuardCheck) {
         reply.code(403).send({
           message:
             'Your query appears to contain inappropriate content. Please rephrase and try again',

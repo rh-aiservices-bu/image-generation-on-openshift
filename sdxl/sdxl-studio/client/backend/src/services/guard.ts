@@ -29,8 +29,8 @@ export default async (payload: Payload): Promise<boolean> => {
       );
 
     if (parseGuardResponse(guardResponse.data) !== 'No') {
-      return false // Prompt failed guard check
+      return true // Prompt failed guard check
     } else {
-      return true // Prompt passed guard check 
+      return false // Prompt passed guard check 
     }
 };
