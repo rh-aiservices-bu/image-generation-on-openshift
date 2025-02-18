@@ -1,22 +1,15 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
-<<<<<<< HEAD
 import { getSDXLEndpoint, getGuardEnabled } from '../../../utils/config'; // Adjust the import path as needed
 import guard from '../../../services/guard';
-=======
-import {
-  getSDXLEndpoint,
-  getGuardEnabled,
-  getGuardEndpoint,
-  getGuardModel,
-  getGuardTemp,
-  getGuardPromptPreFix,
-} from '../../../utils/config'; // Adjust the import path as needed
-import { parseGuardResponse } from '../../../utils/parser';
->>>>>>> 5eaff0b (Tested with guardian model)
+import safetyChecker from '../../../services/image-safety-check';
+import { Payload } from '../../../schema/payload';
+import { safeImage } from '../../../utils/safeImage';
+
 export default async (fastify: FastifyInstance): Promise<void> => {
   const decoder = new TextDecoder('utf-8');
+  const jobTracker: Payload[] = [];
 
   // ============================
   // 1. POST Endpoint: Start Job
@@ -32,7 +25,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       denoising_limit,
     } = req.body as any;
 
-    const data = {
+    const data: Payload = {
       prompt,
       guidance_scale,
       num_inference_steps,
@@ -40,42 +33,13 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       width,
       height,
       denoising_limit,
+      past_threshold: false,
+      image_failed_check: false,
     };
 
-<<<<<<< HEAD
     if (getGuardEnabled() === 'true') {
       const failedGuardCheck = await guard(data);
       if (failedGuardCheck) {
-        reply.code(403).send({
-          message:
-            'Your query appears to contain inappropriate content. Please rephrase and try again',
-        });
-        return;
-      }
-    }
-
-    console.log(
-      'Sending request to SDXL endpoint:',
-      getSDXLEndpoint().sdxlEndpointURL + '/generate',
-    );
-
-=======
->>>>>>> 5eaff0b (Tested with guardian model)
-    if (getGuardEnabled() === 'true') {
-      console.log(
-        'Sending request to Guard endpoint:',
-        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
-      );
-      const message = {
-        model: getGuardModel(),
-        messages: [{ role: 'user', content: getGuardPromptPreFix() + ' ' + data.prompt }],
-        temperature: getGuardTemp(),
-      };
-      const guardResponse = await axios.post(
-        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
-        message,
-      );
-      if (parseGuardResponse(guardResponse.data) !== 'No') {
         reply.code(403).send({
           message:
             'Your query appears to contain inappropriate content. Please rephrase and try again',
@@ -100,7 +64,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       reply.code(500).send({ message: 'No job_id returned from generation endpoint.' });
       return;
     }
-
+    jobTracker[parseInt(job_id)] = data;
     reply.send({ job_id });
   });
 
@@ -122,16 +86,41 @@ export default async (fastify: FastifyInstance): Promise<void> => {
     const apiWs = new WebSocket(apiWsUrl);
 
     // Handle incoming messages from the API WebSocket
-    apiWs.on('message', (data: WebSocket.Data) => {
+    apiWs.on('message', async (data: WebSocket.Data) => {
       try {
         const dataString = typeof data === 'string' ? data : decoder.decode(data as ArrayBuffer);
         const msg = JSON.parse(dataString);
+        // Base64 image is msg.image
+
         // console.log('job_id:', job_id, 'Received message from API:', msg.status);
         msg.job_id = job_id;
 
-        // Forward the message to the client
-        connection.socket.send(JSON.stringify(msg));
+        // Get the current job details from the jobTracker array
 
+        const currentJob = jobTracker[parseInt(job_id)];
+
+        // Check to see if we've past the threshold for image checking, and if we have set this on the jobTracker array.
+
+        if (!currentJob.past_threshold && currentJob.num_inference_steps / 2 < msg.step) {
+          jobTracker[parseInt(job_id)].past_threshold = true;
+        }
+
+        if (msg.image && currentJob && currentJob.past_threshold) {
+          const failedSafetyCheck = await safetyChecker(msg.image);
+          if (!failedSafetyCheck) {
+            // Forward the message to the client
+            connection.socket.send(JSON.stringify(msg));
+          } else {
+            // The image failed the safety check, replace with the safe image.
+            msg.image_failed_check = true;
+            currentJob.image_failed_check = true;
+            msg.image = safeImage;
+            connection.socket.send(JSON.stringify(msg));
+          }
+        } else {
+          // Forward the message to the client
+          connection.socket.send(JSON.stringify(msg));
+        }
         // Close both connections when the job is complete
         if (msg.status === 'completed') {
           apiWs.close();

@@ -6,4 +6,6 @@ export interface Payload {
   width: number;
   height: number;
   denoising_limit: number;
+  past_threshold: boolean;
+  image_failed_check: boolean;
 }

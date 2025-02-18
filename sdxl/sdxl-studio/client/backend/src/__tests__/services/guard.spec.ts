@@ -23,7 +23,10 @@ describe('Guard Function', () => {
             crops_coords_top_left: [0,0],
             width: 512,
             height: 512, 
-            denoising_limit: 0};
+            denoising_limit: 0,
+            past_threshold: false,
+            image_failed_check: false
+        };
             
         mockConfig = {
             guardModel: 'test-model',
