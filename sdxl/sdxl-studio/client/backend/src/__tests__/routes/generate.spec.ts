@@ -1,12 +1,13 @@
 import Fastify from 'fastify';
 import axios from 'axios';
+import guard from '../../services/guard';
 import jobRoutes from '../../routes/api/generate/index'
-import {setSDXLEndpoint, setGuardEndpoint, setGuardEnabled} from '../../utils/config'
+import {setSDXLEndpoint, setGuardEndpoint, setGuardEnabled, getGuardEnabled} from '../../utils/config';
 
 jest.mock('axios');
 jest.mock('ws');
+jest.mock('../../services/guard');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
-const axiosSpy = jest.spyOn(mockedAxios,'post');
 
 const fastify = Fastify();
 
@@ -21,6 +22,7 @@ afterAll(async () => {
 
 describe('POST /', () => {
   it('should return job_id when generation request is successful with guardian disabled', async () => {
+    setGuardEnabled('false');
     setSDXLEndpoint('http://sdxl-endpoint', 'sdxl-token');
     mockedAxios.post.mockImplementation((url, data) => {
       if (url === 'http://sdxl-endpoint/generate?user_key=sdxl-token') {
@@ -48,80 +50,34 @@ describe('POST /', () => {
     expect(JSON.parse(response.body)).toEqual({ job_id: '12345' });
   });
 
-  it('should return error code 403 when guardian is enabled and prompt request is for innapropriate content', async () => {
+  it('should reject a request if guard check fails', async () => {
     setGuardEnabled('true');
-    setGuardEndpoint('http://guard-endpoint', 'guard-token');
-    
-    mockedAxios.post.mockImplementation((url, data: any) => {
-      if (url === 'http://guard-endpoint/chat/completions' && data.messages[0].content === 'Innapropriate request' ) {
-        return Promise.resolve({data:
-          {choices: 
-            [ { 
-              message: 
-              { role: 'assistant', 
-                content: 'Yes', 
-                tool_calls: [], 
-              } 
-            }
-            ]
-          } 
-      });
-      } else {
-        return Promise.resolve({ data: 'no' });
-      }
-    });
-    
+    (guard as jest.Mock).mockResolvedValue(false);
+
     const response = await fastify.inject({
       method: 'POST',
       url: '/',
       payload: {
-        prompt: 'Innapropriate request',
+        prompt: 'inappropriate content',
       },
     });
-    expect(response.statusCode).toBe(403);
+
+
+    expect(response.body).toEqual("{\"message\":\"Your query appears to contain inappropriate content. Please rephrase and try again\"}");
 
   });
 
   it('should return error code 200 when guardian is enabled and prompt request is for safe content', async () => {
     setGuardEnabled('true');
-    setGuardEndpoint('http://guard-endpoint', 'guard-token');
-    mockedAxios.post.mockImplementation((url, data: any) => {
-      if (url === 'http://guard-endpoint/chat/completions') {
-        if ( data.messages[0].content === 'Innapropriate request' ) {
-          return Promise.resolve({data:
-            {choices: 
-              [ { 
-                message: 
-                { role: 'assistant', 
-                  content: 'Yes', 
-                  tool_calls: [] 
-                } 
-              }
-              ] 
-            } 
-        });
-        } else {
-            return Promise.resolve( {data: 
-              {choices: 
-                [ { 
-                  message: 
-                  { role: 'assistant', 
-                    content: 'No', 
-                    tool_calls: [] 
-                  } 
-                }
-                ] 
-              } 
-        });
-        }
-      }
+    (guard as jest.Mock).mockResolvedValue(true);
+    mockedAxios.post.mockImplementation((url, data) => {
       if (url === 'http://sdxl-endpoint/generate?user_key=sdxl-token') {
-        return Promise.resolve({ data: { job_id: '12345' } });
+        return Promise.resolve({ data: { job_id: '98765' } });
       } else {
         return Promise.reject(new Error('Invalid request'));
       }
     });
-    
+
     const response = await fastify.inject({
       method: 'POST',
       url: '/',
@@ -130,8 +86,8 @@ describe('POST /', () => {
       },
     });
     expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toEqual({ job_id: '12345' });
-
+    expect(JSON.parse(response.body)).toEqual({ job_id: '98765' });
   });
+
 
 });

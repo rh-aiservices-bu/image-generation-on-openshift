@@ -1,14 +1,4 @@
-interface Message {
-  content: string;
-}
-
-interface Choice {
-  message: Message;
-}
-
-interface Data {
-  choices: Choice[];
-}
+import { Data } from '../schema/data';
 
 export const parseGuardResponse = (data: Data): string => {
   if (

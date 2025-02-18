@@ -1,15 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
-import {
-  getSDXLEndpoint,
-  getGuardEnabled,
-  getGuardEndpoint,
-  getGuardModel,
-  getGuardTemp,
-  getGuardPromptPreFix,
-} from '../../../utils/config'; // Adjust the import path as needed
-import { parseGuardResponse } from '../../../utils/parser';
+import { getSDXLEndpoint, getGuardEnabled } from '../../../utils/config'; // Adjust the import path as needed
+import guard from '../../../services/guard';
 export default async (fastify: FastifyInstance): Promise<void> => {
   const decoder = new TextDecoder('utf-8');
 
@@ -38,20 +31,8 @@ export default async (fastify: FastifyInstance): Promise<void> => {
     };
 
     if (getGuardEnabled() === 'true') {
-      console.log(
-        'Sending request to Guard endpoint:',
-        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
-      );
-      const message = {
-        model: getGuardModel(),
-        messages: [{ role: 'user', content: getGuardPromptPreFix() + ' ' + data.prompt }],
-        temperature: getGuardTemp(),
-      };
-      const guardResponse = await axios.post(
-        getGuardEndpoint().guardEndpointURL + `/chat/completions`,
-        message,
-      );
-      if (parseGuardResponse(guardResponse.data) !== 'No') {
+      const passedGuardCheck = await guard(data);
+      if (!passedGuardCheck) {
         reply.code(403).send({
           message:
             'Your query appears to contain inappropriate content. Please rephrase and try again',
