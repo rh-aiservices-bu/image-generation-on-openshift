@@ -90,22 +90,17 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       try {
         const dataString = typeof data === 'string' ? data : decoder.decode(data as ArrayBuffer);
         const msg = JSON.parse(dataString);
-        // Base64 image is msg.image
-
-        // console.log('job_id:', job_id, 'Received message from API:', msg.status);
         msg.job_id = job_id;
 
         // Get the current job details from the jobTracker array
-
         const currentJob = jobTracker[parseInt(job_id)];
 
-        // Check to see if we've past the threshold for image checking, and if we have set this on the jobTracker array.
-
+        // Check to see if we've passed the threshold for image checking, and if we have not, check if we need to set this on the jobTracker array.
         if (!currentJob.past_threshold && currentJob.num_inference_steps / 2 < msg.step) {
           jobTracker[parseInt(job_id)].past_threshold = true;
         }
 
-        if (msg.image && currentJob && currentJob.past_threshold) {
+        if (msg.image && currentJob.past_threshold) {
           const failedSafetyCheck = await safetyChecker(msg.image);
           if (!failedSafetyCheck) {
             // Forward the message to the client

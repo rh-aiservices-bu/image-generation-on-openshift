@@ -31,6 +31,9 @@ export default async (image: String): Promise<boolean> => {
           headers
         }
       );
+
+    // The response from the safety check will the true if it should be blocked and false if the iamge is ok.  Return this to caller.
+    
     if (safetyCheckResponse.data && 
       safetyCheckResponse.data.outputs  ) {
       return safetyCheckResponse.data.outputs[0].data[0];
