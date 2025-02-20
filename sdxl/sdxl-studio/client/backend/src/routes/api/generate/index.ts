@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
-import { getSDXLEndpoint, getGuardEnabled } from '../../../utils/config'; // Adjust the import path as needed
+import { getSDXLEndpoint, getGuardEnabled, getSafetyCheckEnabled } from '../../../utils/config'; // Adjust the import path as needed
 import guard from '../../../services/guard';
 import safetyChecker from '../../../services/image-safety-check';
 import { Payload } from '../../../schema/payload';
@@ -100,7 +100,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
           jobTracker[parseInt(job_id)].past_threshold = true;
         }
 
-        if (msg.image && currentJob.past_threshold) {
+        if (getSafetyCheckEnabled() === 'true' && msg.image && currentJob.past_threshold) {
           const failedSafetyCheck = await safetyChecker(msg.image);
           if (!failedSafetyCheck) {
             // Forward the message to the client
