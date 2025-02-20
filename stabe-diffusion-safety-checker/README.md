@@ -35,8 +35,8 @@ However, note that while this method works, it has limitations in quality. For i
 
 # Examples
 
-You can find a [notebook](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/local_safety_checker.ipynb) with an example of using and customizing the Safety Checker.  
-There is also a [InferenceService template](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/template.yaml) (make sure to add a GPU if you want it to run faster) and a [custom runtime](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/runtime/) to serve with KServe, as well as a simple request [notebook](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/example_request.ipynb) you can use to send requests to the served model.  
+You can find a [notebook](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/local_safety_checker.ipynb) with an example of locally using and customizing the Safety Checker.  
+There is also a [InferenceService template](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/InfereceService.yaml) (make sure to add a GPU if you want it to run faster) and a [custom runtime](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/runtime/) to serve with KServe, as well as a simple request [notebook](https://github.com/rh-aiservices-bu/image-generation-on-openshift/blob/main/stable-diffusion-safety-checker/example_request.ipynb) you can use to send requests to the served model.  
 
 ## More model details
 
