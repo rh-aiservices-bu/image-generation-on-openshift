@@ -22,5 +22,3 @@ test('getGuardEnabled: default, false ', () => {
   
   expect(getGuardEnabled()).toBe("false");
 });
-
-
