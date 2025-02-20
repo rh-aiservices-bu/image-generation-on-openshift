@@ -41,6 +41,6 @@ There is also a [InferenceService template](https://github.com/rh-aiservices-bu/
 ## More model details
 
 The original model’s categories were obfuscated to prevent people from bypassing them. However, they have since been reverse-engineered.  
-⚠️ **Note:** The following paper and reference expose NSFW categories. Enter at your own risk. ⚠️  
+⚠️ **Note:** The following paper and example expose NSFW categories. Enter at your own risk. ⚠️  
 - [Paper](https://arxiv.org/pdf/2210.04610) describing the model in depth.
 - [Example](https://colab.research.google.com/drive/1TWQae-fBpw7vS7j-N1WAM_30Mq2N80JL) where the categories are revealed in the model response.
