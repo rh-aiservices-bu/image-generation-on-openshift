@@ -199,17 +199,30 @@ const SDXLMiniStudio: React.FunctionComponent<SDXLMiniStudioProps> = () => {
 
             // If the job is complete, update the image data and close the WebSocket.
             if (msg.status && msg.status === 'completed') {
-              setProgressVisible(false);
-              setBaseStep(0);
-              setRefinerStep(0);
-              setFileName('new_image.png');
-              setFileData(msg.image);
-              setImagePanelTitle('Image generated in ' + msg.processing_time.toFixed(1) + ' seconds');
-              Emitter.emit('notification', {
-                variant: 'success',
-                title: '',
-                description: 'Image generated!',
-              });
+              if (msg.image_failed_check === true ) {
+                setProgressVisible(false);
+                setBaseStep(0);
+                setRefinerStep(0);
+                setImagePanelTitle('Image generation error');
+                Emitter.emit('notification', {
+                  variant: 'warning',
+                  title: '',
+                  description: 'Sorry, the generated image has been classified as sensitive and blocked!',
+                });
+              } else {
+                setProgressVisible(false);
+                setBaseStep(0);
+                setRefinerStep(0);
+                setFileName('new_image.png');
+                setFileData(msg.image);
+                setImagePanelTitle('Image generated in ' + msg.processing_time.toFixed(1) + ' seconds');
+                Emitter.emit('notification', {
+                  variant: 'success',
+                  title: '',
+                  description: msg.description || 'Image generated!',
+                });  
+              }
+
               ws.close();
             }
           } catch (err) {

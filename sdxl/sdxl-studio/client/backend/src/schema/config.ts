@@ -5,4 +5,10 @@ export interface GuardConfig {
     guardEndpointURL: string;
     guardEndpointToken: string;
   }
+
+export interface SafetyCheckConfig {
+    safetyCheckModel: string;
+    safetyCheckEndpointURL: string;
+    safetyCheckEndpointToken: string;
+  }
   
