@@ -1,0 +1,27 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: safety-checker
+    serving.knative.openshift.io/enablePassthrough: 'true'
+    sidecar.istio.io/inject: 'true'
+    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+  name: safety-checker
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  spec:
+    predictor:
+      containers:
+        - args:
+          - '--model_name=safety-checker'
+          image: 'quay.io/rh-aiservices-bu/safety-checker:standard-0.1'
+          name: kserve-container
+          resources:
+            limits:
+              cpu: '1'
+              memory: 10Gi
+            requests:
+              cpu: '1'
+              memory: 10Gi
