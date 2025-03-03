@@ -13,7 +13,7 @@ def add_watermark(base64_image, watermark_text):
     draw = ImageDraw.Draw(txt_layer)
     
     # Load a font and set a large size relative to the image size
-    font_size = int(min(width, height) / 5)  # Adjust for large watermark
+    font_size = int(min(width, height) / 10)  # Adjust for large watermark
     font = ImageFont.load_default(font_size)  # You can use a TTF file like ImageFont.truetype("arial.ttf", 50)
     
     # Get text size and position it at the center

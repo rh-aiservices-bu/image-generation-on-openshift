@@ -306,7 +306,7 @@ async def worker(worker_id, job_queue, pipeline_instance):
             await job.notification_queue.put(
                 {
                     "status": "completed",
-                    "image": encoded_image,
+                    "image": watermarked_image,
                     "processing_time": processing_time,
                 }
             )
