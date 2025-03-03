@@ -265,13 +265,14 @@ async def worker(worker_id, job_queue, pipeline_instance):
             def callback_func_refiner(_pipe, step, _timestep, callback_kwargs):
                 latents = callback_kwargs["latents"]
                 base64_image = process_latents(pipeline_instance, latents)
+                watermarked_image = add_watermark(base64_image, 'For demo purposed only')
                 future = asyncio.run_coroutine_threadsafe(
                     job.notification_queue.put(
                         {
                             "pipeline": "refiner",
                             "status": "progress",
                             "step": step,
-                            "image": base64_image,
+                            "image": watermarked_image,
                         }
                     ),
                     loop,
