@@ -63,3 +63,5 @@ watchfiles==1.0.4; python_version >= '3.9'
 websockets==14.2; python_version >= '3.9'
 xformers==0.0.29.post1; python_version >= '3.9'
 zipp==3.21.0; python_version >= '3.9'
+pillow==11.1.0; 
+

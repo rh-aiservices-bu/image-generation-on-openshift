@@ -16,6 +16,7 @@ from classes import GenerationRequest, GenerationResponse, HealthCheckResponse, 
 from diffusers_model import DiffusersPipeline
 from helpers import logging_config, parse_args
 from latents_preview import process_latents
+from watermark import add_watermark
 
 # Load local env vars if present
 load_dotenv()
@@ -294,7 +295,10 @@ async def worker(worker_id, job_queue, pipeline_instance):
             img_bytes.seek(0)
             encoded_image = base64.b64encode(img_bytes.read()).decode("utf-8")
 
-            job.result = encoded_image
+            # Add watermark to the base64 encoded image
+            watermarked_image = add_watermark(encoded_image, 'For demo purposed only')
+
+            job.result = watermarked_image
 
             # Handle the result and notify the client
             await job.notification_queue.put(
