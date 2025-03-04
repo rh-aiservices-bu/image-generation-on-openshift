@@ -14,7 +14,7 @@ def add_watermark(base64_image, watermark_text):
     draw = ImageDraw.Draw(txt_layer)
     
     # Load a font and set a large size relative to the image size
-    font_size = int(min(width, height) / 25)  # Adjust for large watermark
+    font_size = int(min(width, height) / 30)  # Adjust for large watermark
     font = ImageFont.load_default(font_size)  # Replace with a TTF file if needed
     
     # Calculate diagonal positioning
@@ -33,7 +33,7 @@ def add_watermark(base64_image, watermark_text):
     
     # Tile the text across the image diagonally
     # print(width)
-    step_x = int(text_width * .9)
+    step_x = int(text_width * .8)
     step_y = int(text_height * 3)
     for x in range(-width , width , step_x):
         for y in range(-height , height, step_y):

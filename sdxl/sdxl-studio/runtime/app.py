@@ -297,7 +297,7 @@ async def worker(worker_id, job_queue, pipeline_instance):
             encoded_image = base64.b64encode(img_bytes.read()).decode("utf-8")
 
             # Add watermark to the base64 encoded image
-            watermark_text = os.getenv("WATERMARK_TEXT", "For demo purposes only")
+            watermark_text = os.getenv("WATERMARK_TEXT", "AI-generated Image. Demo purposes only. More info at red.ht/maas")
             watermarked_image = add_watermark(encoded_image, watermark_text)
 
             job.result = watermarked_image
