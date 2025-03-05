@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 import WebSocket from 'ws';
-import { getSDXLEndpoint, getGuardEnabled, getSafetyCheckEnabled } from '../../../utils/config'; // Adjust the import path as needed
+import { getSDXLEndpoint, getGuardEnabled, getSafetyCheckEnabled, getGuardConfig, getSafetyCheckConfig } from '../../../utils/config'; // Adjust the import path as needed
 import guard from '../../../services/guard';
 import safetyChecker from '../../../services/image-safety-check';
 import { Payload } from '../../../schema/payload';
@@ -36,6 +36,30 @@ export default async (fastify: FastifyInstance): Promise<void> => {
       past_threshold: false,
       image_failed_check: false,
     };
+
+    const guardConfig = getGuardConfig();
+    const safetyCheckConfig = getSafetyCheckConfig();
+
+    // Check all is well with the environment configurations
+    if (getGuardEnabled() === 'true') {
+      if (guardConfig.guardEndpointToken ==='' || guardConfig.guardEndpointURL ==='') {
+        reply.code(403).send({
+          message:
+            'Guardrails not configured correctly',
+        });
+        return;
+      }
+    }
+
+    if (getSafetyCheckEnabled() === 'true') {
+      if ( safetyCheckConfig.safetyCheckEndpointToken === '' || safetyCheckConfig.safetyCheckEndpointURL === '' ) {
+        reply.code(403).send({
+          message:
+            'Safety checker not configured correctly',
+        });
+        return;
+      }
+    }
 
     if (getGuardEnabled() === 'true') {
       const failedGuardCheck = await guard(data);
