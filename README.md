@@ -2,6 +2,8 @@
 
 In this repo you will find resources, demos, recipes... to work with Image Generation Models (IGM) on OpenShift with OpenShift AI or Open Data Hub.
 
+Follow [this walkthrough](https://ai-on-openshift.io/generative-ai/building-an-image-generation-app/) to use the files in this repository.
+
 ## Content
 
 The following Serving Runtimes for IGMs can be deployed on OpenShift, either standalone or using OpenShift AI.
